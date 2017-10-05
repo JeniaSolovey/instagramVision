@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Instagram.Domain.Entities.Image>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div id="DropzoneArea" class="">
+
+    @using (Html.BeginForm("UploadImage", "Image", new { }, FormMethod.Post, new
+    {
+        enctype = "multipart/form-data",
+        id = "imgUpload",
+        @class = "dropzone",
+    }))
+    {
+        <div class="fallback">
+            <input name="file" type="file" multiple />
+            <input type="submit" value="Upload" />
+        </div>
+    }
+</div>
+
+<header>
+    <h1>Google vision API</h1>
+</header>
+
+<ul class="cd-items cd-container">
+    @foreach (var img in Model)
+    {
+        <li class="cd-item">
+            <img src="@Url.Content(img.Path)" productid="@img.ImageId" style="width: 100%; height: 200px;" alt="@img.Annotation">
+            <a href="#0" onclick="ChangeData('@img.Annotation', '@img.ImageId')" class="cd-trigger">Quick View</a>
+        </li>
+    }
+</ul>
+
+<div class="cd-quick-view" style="overflow:hidden;">
+    <div class="cd-slider-wrapper">
+        <ul class="cd-slider">
+            @foreach (var image in Model)
+            {
+                <a href="@Url.Content(image.Path)" data-fancybox><li><img src="@Url.Content(image.Path)" alt="@image.Annotation"></li></a>
+            }
+        </ul>
+    </div>
+
+    <div class="cd-item-info">
+        <p class="description"></p>
+        <ul class="cd-item-action">
+            <li>@Ajax.ActionLink("Delete", "DeleteImage", new { imageId = 123 }, new AjaxOptions { HttpMethod = "delete", OnSuccess = "SuccessedDelete" }, new { id = "deleteButtom" })</li>
+        </ul>
+    </div>
+    <a href="#0" class="cd-close">Close</a>
+</div>
+
+
+<script>
+    function ChangeData(arg, id) {
+        console.log("call");
+        $(".description").html(arg);
+        $("#deleteButtom").attr("href", '@Url.Action("DeleteImage", "Image")?imageId=' + id);
+    }
+
+    function SuccessedDelete() {
+        location.reload();
+    }
+
+    Dropzone.options.imgUpload = {
+        init: function () {
+            this.on("queuecomplete", function () {
+                location.reload();
+
+            });
+
+        },
+        acceptedFiles: "image/jpeg,image/png,image/gif",
+        maxFilesize: 4,
+    };
+</script>
