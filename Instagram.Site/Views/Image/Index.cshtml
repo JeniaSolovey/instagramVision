@@ -71,6 +71,10 @@
 
             });
 
+            this.on("error", function (error) {
+                alert("Oops.. Error occured. Make sure your file is gif/png/jpg and is less that 4MB");
+            });
+
         },
         acceptedFiles: "image/jpeg,image/png,image/gif",
         maxFilesize: 4,
